@@ -24,12 +24,12 @@ done
 
 echo "Comprimiendo"
 for i in {1..4}; do
-    ssh kali-"$nube"$i "cd /home/kali/HACKING && rm -f ${country}${i}.tar.gz && tar -zcvf ${country}${i}.tar.gz ${country}${i}"
+    ssh kali-"$nube-"$i "cd /home/kali/HACKING && rm -f ${country}${i}.tar.gz && tar -zcvf ${country}${i}.tar.gz ${country}${i}"
 done
 
 echo "descargando"
 for i in {1..4}; do
-    scp kali-"$nube"$i:/home/kali/HACKING/${country}${i}.tar.gz .
+    scp kali-"$nube-"$i:/home/kali/HACKING/${country}${i}.tar.gz .
 done
 
 echo "descomprimiendo"
