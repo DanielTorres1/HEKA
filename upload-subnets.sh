@@ -77,7 +77,8 @@ if [ "$nube" = "todas" ]; then
     done
 
     for i in {5..8}; do
-        ssh kali-digital-$i 'rm /root/HACKING/red* /root/HACKING/archivo.log'
+        index=$((i-4))
+        ssh kali-digital-$index 'rm /root/HACKING/red* /root/HACKING/archivo.log'
         scp red_${i}.txt kali-digital-$i:/root/HACKING
     done
 fi
