@@ -28,11 +28,19 @@ done
 # Nombre del archivo de entrada
 archivo="SUBNETS-${country}2.txt"
 
-# Cuenta el número total de líneas en el archivo
-total_lineas=$(( $(wc -l < "$archivo") + 3 ))
 
 # Calcula el número de líneas por archivo, dejando 3 líneas para el último archivo
-lineas_por_archivo=$(( (total_lineas ) / 4 ))
+
+if [ "$nube" = "todas" ]; then
+    # Cuenta el número total de líneas en el archivo
+    total_lineas=$(( $(wc -l < "$archivo") + 7 ))
+    lineas_por_archivo=$(( (total_lineas ) / 8 ))
+else
+    # Cuenta el número total de líneas en el archivo
+    total_lineas=$(( $(wc -l < "$archivo") + 3 ))
+    lineas_por_archivo=$(( (total_lineas ) / 4 ))
+fi
+
 
 # Usa split para dividir el archivo en partes iguales, con las líneas calculadas
 split -l $lineas_por_archivo "$archivo" temp_parte_
@@ -45,12 +53,31 @@ do
     contador=$((contador + 1))
 done
 
-# Subir archivos a la nube correspondiente
-for i in {1..4}; do
-    echo "Subiendo red_${i}.txt"
-    if [ "$nube" = "amazon" ]; then
-        scp red_${i}.txt kali-amazon-$i:/home/admin && ssh kali-amazon-$i "sudo mv /home/admin/red_${i}.txt /root/HACKING"
-    else
+if [ "$nube" = "amazon" ]; then
+    # Subir archivos a la nube correspondiente
+    for i in {1..4}; do
+        echo "Subiendo red_${i}.txt"
+        ssh kali-amazon-$i 'rm /root/HACKING/red* /root/HACKING/archivo.log'
+        scp red_${i}.txt kali-amazon-$i:/home/admin && ssh kali-amazon-$i "sudo mv /home/admin/red_${i}.txt /root/HACKING"    
+    done
+fi
+
+if [ "$nube" = "digital" ]; then
+    for i in {1..4}; do
+        ssh kali-digital-$i 'rm /root/HACKING/red* /root/HACKING/archivo.log'
         scp red_${i}.txt kali-digital-$i:/root/HACKING
-    fi
-done
+    done
+fi
+
+if [ "$nube" = "todas" ]; then
+    for i in {1..4}; do
+        echo "Subiendo red_${i}.txt"
+        ssh kali-amazon-$i 'rm /root/HACKING/red* /root/HACKING/archivo.log'
+        scp red_${i}.txt kali-amazon-$i:/home/admin && ssh kali-amazon-$i "sudo mv /home/admin/red_${i}.txt /root/HACKING"    
+    done
+
+    for i in {5..8}; do
+        ssh kali-digital-$i 'rm /root/HACKING/red* /root/HACKING/archivo.log'
+        scp red_${i}.txt kali-digital-$i:/root/HACKING
+    done
+fi

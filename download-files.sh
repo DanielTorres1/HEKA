@@ -40,5 +40,5 @@ done
 
 echo "Uniendo logs y BDs"
 
-python merge-db.py $country
+merge-db.py $country
 
